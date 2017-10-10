@@ -1,0 +1,7 @@
+timestamp: 2017-10-08T13:16:11.883845
+CREATE TABLE "example_models"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "foo" CHAR(512),
+    "bar" CHAR(512)
+);
+success!

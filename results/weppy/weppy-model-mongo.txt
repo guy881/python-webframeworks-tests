@@ -1,0 +1,8 @@
+Running 10s test @ http://192.168.0.11:8080/model-mongo
+  2 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency   304.14ms   48.98ms 610.91ms   79.94%
+    Req/Sec    17.05      7.95    40.00     79.64%
+  324 requests in 10.03s, 69.79KB read
+Requests/sec:     32.32
+Transfer/sec:      6.96KB
