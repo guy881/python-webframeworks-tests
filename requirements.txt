@@ -1,0 +1,6 @@
+django
+falcon
+weppy
+gunicorn
+psutil
+pymongo

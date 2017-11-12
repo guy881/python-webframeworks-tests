@@ -1,0 +1,101 @@
+[
+  {
+    "name": "Weppy",
+    "server": "own",
+    "path": "frameworks/weppy_test/",
+    "command": "python app.py",
+    "ready_output": "Restarting (stat mode)",
+    "tests": [
+      {
+        "name": "serialization test",
+        "url": ""
+      },
+      {
+        "name": "model serialization test",
+        "url": "/model"
+      }
+    ]
+  },
+  {
+    "name": "Weppy",
+    "server": "gunicorn",
+    "path": "frameworks/weppy_test/",
+    "command": "gunicorn app:app -b :8080",
+    "ready_output": "Booting worker with pid:",
+    "tests": [
+      {
+        "name": "serialization test",
+        "url": ""
+      },
+      {
+        "name": "model serialization test",
+        "url": "/model"
+      }
+    ]
+  },
+  {
+    "name": "Django",
+    "server": "own",
+    "path": "frameworks/django_test/",
+    "command": "python manage.py runserver 0.0.0.0:8080",
+    "ready_output": "Quit the server with CONTROL-C",
+    "tests": [
+      {
+        "name": "serialization test",
+        "url": ""
+      },
+      {
+        "name": "model serialization test",
+        "url": "/model"
+      }
+    ]
+  },
+  {
+    "name": "Django",
+    "server": "gunicorn",
+    "path": "frameworks/django_test/",
+    "command": "gunicorn django_test.wsgi -b :8080",
+    "ready_output": "Booting worker with pid:",
+    "tests": [
+      {
+        "name": "serialization test",
+        "url": ""
+      },
+      {
+        "name": "model serialization test",
+        "url": "/model"
+      }
+    ]
+  },
+  {
+    "name": "Falcon",
+    "server": "gunicorn",
+    "path": "frameworks/falcon_test/",
+    "command": "gunicorn falcon_test_main:app -b :8080",
+    "ready_output": "Booting worker with pid:",
+    "tests": [
+      {
+        "name": "serialization test",
+        "url": ""
+      },
+      {
+        "name": "model serialization test",
+        "url": "/model"
+      }
+    ]
+  },
+    {
+    "name": "Japronto",
+    "server": "own",
+    "path": "frameworks/japronto_test/",
+    "command": "python app.py",
+    "ready_output": "Accepting connections on",
+    "tests": [
+      {
+        "name": "serialization test",
+        "url": ""
+      }
+    ]
+  }
+
+]
