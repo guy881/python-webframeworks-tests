@@ -6,57 +6,80 @@ import statistics
 import subprocess
 import sys
 from time import sleep
+import asyncio
+from asyncio.subprocess import PIPE, STDOUT
 
-import os
+
 import psutil
+import uvloop
 
 test_duration = 3  # seconds
 frameworks_processes = set()
 
 
 def run_wrk(host):
-    wrk = subprocess.run(["wrk", "-d{}s".format(test_duration), host], stdout=subprocess.PIPE)
-    if wrk.returncode != 0:
-        raise Exception("Error: Wrk exited with non zero code :/")
+    # wrk = subprocess.run(["wrk", "-d{}s".format(test_duration), host], stdout=subprocess.PIPE)
+    max_iters = 1000
+    for i in range(max_iters):
+        wrk_fut = asyncio.create_subprocess_exec("wrk", "-d{}s".format(test_duration), host, stdout=PIPE, stderr=STDOUT)
+        wrk = loop.run_until_complete(wrk_fut)
 
-    result = wrk.stdout.decode(sys.stdout.encoding)
-    match = re.search(r'Requests/sec:\s*(\d+\.\d+)', result)
-    if match:
-        requests_per_second = match.groups(0)[0]
-        return float(requests_per_second)
+        returncode = loop.run_until_complete(wrk.wait())
+        if returncode != 0:
+            if i == max_iters - 1:
+                raise Exception("Error: Wrk exited with non zero code :/")
+            continue
+        else:
+            break
+
+    while True:
+        line = loop.run_until_complete(wrk.stdout.readline())
+        line = line.decode(sys.stdout.encoding)
+        match = re.search(r'Requests/sec:\s*(\d+\.\d+)', line)
+        if match:
+            requests_per_second = match.groups(0)[0]
+            return float(requests_per_second)
 
     raise Exception("Error: couldn't find amount of requests/sec in wrk response")
 
 
 def run_framework(framework):
     command_with_params = framework['command'].split(' ')
+    # command_with_params = framework['command']
     ready_output = framework['ready_output']  # this is printed when server is ready and we can continue
-    dir_path = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(dir_path, framework['path'])
-    framework_proc = subprocess.Popen(command_with_params, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
-                                      cwd=path)
+    path = framework['path']
+    # framework_proc = subprocess.Popen(command_with_params, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
+    #                                   cwd=path)
     print("Running framework server, use ctrl + c if it doesn't work after a while")
     # read line without blocking
 
-    stdout_poll = select.poll()
-    stderr_poll = select.poll()
-    stdout_poll.register(framework_proc.stdout, select.POLLIN)
-    stderr_poll.register(framework_proc.stderr, select.POLLIN)
+    server_fut = asyncio.create_subprocess_exec(*command_with_params, stdout=PIPE, stderr=sys.stderr, cwd=path)
+    server = loop.run_until_complete(server_fut)
+
+    # stdout_poll = select.poll()
+    # stderr_poll = select.poll()
+    # stdout_poll.register(framework_proc.stdout, select.POLLIN)
+    # stderr_poll.register(framework_proc.stderr, select.POLLIN)
+    success_message = "Successfully launched {}".format(framework['name'])
 
     while True:  # wait until framework runs
-        succes_message = "Successfully launched {}".format(framework['name'])
-        stdout_ready = stdout_poll.poll(1)
-        stderr_ready = stderr_poll.poll(1)
-        if stdout_ready:
-            for line in iter(framework_proc.stdout.readline, b''):
-                if ready_output in line.decode():
-                    print(succes_message)
-                    return framework_proc
-        if stderr_ready:
-            for line in iter(framework_proc.stderr.readline, b''):
-                if ready_output in line.decode():
-                    print(succes_message)
-                    return framework_proc
+        line = loop.run_until_complete(server.stdout.readline())
+        # stdout_ready = stdout_poll.poll(1)
+        # stderr_ready = stderr_poll.poll(1)
+        # if stdout_ready:
+        #     for line in iter(framework_proc.stdout.readline, b''):
+        #         if ready_output in line.decode():
+        #             print(success_message)
+        #             return framework_proc
+        # if stderr_ready:
+        #     for line in iter(framework_proc.stderr.readline, b''):
+        #         if ready_output in line.decode():
+        #             print(success_message)
+        #             return framework_proc
+        if line:
+            if ready_output in line.decode():
+                print(success_message)
+                return server
         else:
             print("Waiting for framework to start")
             sleep(1)
@@ -81,14 +104,12 @@ def kill(proc):
     for child_proc in process.children(recursive=True):
         child_proc.kill()
     process.kill()
-    frameworks_processes.remove(proc)
 
 
 def cleanup():
     for p in frameworks_processes:
-        if p.poll():
-            print("Killing open process")
-            kill(p)
+        print("Killing open process")
+        kill(p)
 
 
 if __name__ == '__main__':
@@ -99,9 +120,12 @@ if __name__ == '__main__':
     frameworks = json.loads(frameworks_data)
 
     for framework in frameworks:
+        loop = uvloop.new_event_loop()
+        asyncio.set_event_loop(loop)
         print_framework_details(framework)
         proc = run_framework(framework)
-        frameworks_processes.add(proc)
+        psutil_proc = psutil.Process(proc.pid)
+        frameworks_processes.add(psutil_proc)
         results = []
 
         tests = framework['tests']
@@ -113,4 +137,5 @@ if __name__ == '__main__':
             print_test_results(test, results)
 
         kill(proc)  # using psutil, as gunicorn open also child proccesses
+        frameworks_processes.remove(psutil_proc)
         sleep(1)

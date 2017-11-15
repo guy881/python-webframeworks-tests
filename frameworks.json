@@ -20,7 +20,7 @@
     "name": "Weppy",
     "server": "gunicorn",
     "path": "frameworks/weppy_test/",
-    "command": "gunicorn app:app -b :8080",
+    "command": "gunicorn app:app -b :8080 ",
     "ready_output": "Booting worker with pid:",
     "tests": [
       {
@@ -54,7 +54,7 @@
     "name": "Django",
     "server": "gunicorn",
     "path": "frameworks/django_test/",
-    "command": "gunicorn django_test.wsgi -b :8080",
+    "command": "gunicorn django_test.wsgi -b :8080 ",
     "ready_output": "Booting worker with pid:",
     "tests": [
       {
@@ -71,7 +71,7 @@
     "name": "Falcon",
     "server": "gunicorn",
     "path": "frameworks/falcon_test/",
-    "command": "gunicorn falcon_test_main:app -b :8080",
+    "command": "gunicorn falcon_test_main:app -b :8080 ",
     "ready_output": "Booting worker with pid:",
     "tests": [
       {
