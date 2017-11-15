@@ -1,11 +1,13 @@
+import atexit
 import json
+import re
+import select
 import statistics
 import subprocess
 import sys
-import re
 from time import sleep
-import select
-import atexit
+
+import os
 import psutil
 
 test_duration = 3  # seconds
@@ -29,7 +31,8 @@ def run_wrk(host):
 def run_framework(framework):
     command_with_params = framework['command'].split(' ')
     ready_output = framework['ready_output']  # this is printed when server is ready and we can continue
-    path = framework['path']
+    dir_path = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(dir_path, framework['path'])
     framework_proc = subprocess.Popen(command_with_params, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
                                       cwd=path)
     print("Running framework server, use ctrl + c if it doesn't work after a while")
