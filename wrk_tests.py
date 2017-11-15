@@ -33,27 +33,19 @@ def run_framework(framework):
     ready_output = framework['ready_output']  # this is printed when server is ready and we can continue
     dir_path = os.path.dirname(os.path.abspath(__file__))
     path = os.path.join(dir_path, framework['path'])
-    framework_proc = subprocess.Popen(command_with_params, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1,
+    framework_proc = subprocess.Popen(command_with_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1,
                                       cwd=path)
+    succes_message = "Successfully launched {}".format(framework['name'])
     print("Running framework server, use ctrl + c if it doesn't work after a while")
     # read line without blocking
 
     stdout_poll = select.poll()
-    stderr_poll = select.poll()
     stdout_poll.register(framework_proc.stdout, select.POLLIN)
-    stderr_poll.register(framework_proc.stderr, select.POLLIN)
 
     while True:  # wait until framework runs
-        succes_message = "Successfully launched {}".format(framework['name'])
         stdout_ready = stdout_poll.poll(1)
-        stderr_ready = stderr_poll.poll(1)
         if stdout_ready:
             for line in iter(framework_proc.stdout.readline, b''):
-                if ready_output in line.decode():
-                    print(succes_message)
-                    return framework_proc
-        if stderr_ready:
-            for line in iter(framework_proc.stderr.readline, b''):
                 if ready_output in line.decode():
                     print(succes_message)
                     return framework_proc
