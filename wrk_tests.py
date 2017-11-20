@@ -11,6 +11,7 @@ import os
 import psutil
 
 test_duration = 3  # seconds
+framework_run_timeout = 3
 frameworks_processes = set()
 
 
@@ -30,29 +31,13 @@ def run_wrk(host):
 
 def run_framework(framework):
     command_with_params = framework['command'].split(' ')
-    ready_output = framework['ready_output']  # this is printed when server is ready and we can continue
-    dir_path = os.path.dirname(os.path.abspath(__file__))
-    path = os.path.join(dir_path, framework['path'])
+    path = os.path.join(framework['path'])
     framework_proc = subprocess.Popen(command_with_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1,
                                       cwd=path)
-    succes_message = "Successfully launched {}".format(framework['name'])
-    print("Running framework server, use ctrl + c if it doesn't work after a while")
-    # read line without blocking
-
-    stdout_poll = select.poll()
-    stdout_poll.register(framework_proc.stdout, select.POLLIN)
-
-    while True:  # wait until framework runs
-        stdout_ready = stdout_poll.poll(1)
-        if stdout_ready:
-            for line in iter(framework_proc.stdout.readline, b''):
-                if ready_output in line.decode():
-                    print(succes_message)
-                    return framework_proc
-        else:
-            print("Waiting for framework to start")
-            sleep(1)
-            continue
+    print("Waiting for framework to start")
+    sleep(framework_run_timeout)
+    print("Successfully launched {}".format(framework['name']))
+    return framework_proc
 
 
 def print_framework_details(framework):
@@ -85,7 +70,7 @@ def cleanup():
 
 if __name__ == '__main__':
     atexit.register(cleanup)  # cleanup after exit
-    host = 'http://localhost:8080'
+    host = 'http://localhost'
     test_iterations = 2
     frameworks_data = open('frameworks.json').read()
     frameworks = json.loads(frameworks_data)
@@ -99,7 +84,8 @@ if __name__ == '__main__':
         tests = framework['tests']
         for test in tests:
             for i in range(test_iterations):
-                result = run_wrk(host)
+                host_and_port = "{}:{}".format(host, framework['port'])
+                result = run_wrk(host_and_port)
                 results.append(result)
 
             print_test_results(test, results)
