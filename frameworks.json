@@ -46,7 +46,7 @@
   {
     "name": "Django",
     "server": "own",
-    "path": "frameworks/python-webframeworks-tests/",
+    "path": "frameworks/django_test/",
     "command": "python manage.py runserver 0.0.0.0:8082",
     "port": "8082",
     "ready_output": "Quit the server with CONTROL-C",
@@ -69,7 +69,7 @@
   {
     "name": "Django",
     "server": "gunicorn",
-    "path": "frameworks/python-webframeworks-tests/",
+    "path": "frameworks/django_test/",
     "command": "gunicorn django_test.wsgi -b :8083",
     "port": "8083",
     "ready_output": "Booting worker with pid:",
