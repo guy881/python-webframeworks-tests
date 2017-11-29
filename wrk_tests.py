@@ -1,17 +1,19 @@
 import atexit
 import json
+import os
 import re
-import select
 import statistics
 import subprocess
 import sys
+import urllib
 from time import sleep
+from urllib import request
+from urllib.error import URLError
 
-import os
 import psutil
 
 test_duration = 3  # seconds
-framework_run_timeout = 3
+framework_run_timeout = 13
 frameworks_processes = set()
 
 
@@ -35,7 +37,15 @@ def run_framework(framework):
     framework_proc = subprocess.Popen(command_with_params, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1,
                                       cwd=path)
     print("Waiting for framework to start")
-    sleep(framework_run_timeout)
+    for time in range(framework_run_timeout):
+        try:
+            urllib.request.urlopen("{}:{}".format(host, framework['port']))
+            break
+        except URLError:
+            if time - 1 == framework_run_timeout:
+                raise Exception("Max timeout exceeded, couldn't run framework")
+            sleep(2)
+    # sleep(framework_run_timeout)
     print("Successfully launched {}".format(framework['name']))
     return framework_proc
 
