@@ -4,6 +4,7 @@ from weppy import App
 from weppy.orm import Database, Model, Field
 from weppy.tools import service
 from pymongo import MongoClient
+from load import generate_load
 
 
 class ExampleModel(Model):
@@ -39,6 +40,12 @@ def model():
 def model_mongo():
     foo = foos.find_one({'foo': 'bar'})
     return json.dumps({'foo': foo['foo'], 'bar': foo['bar']})
+
+
+@app.route("/load")
+@service.json
+def simple_json():
+    return generate_load()
 
 
 @app.command('setup')

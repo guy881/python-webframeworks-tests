@@ -1,0 +1,59 @@
+Framework: Weppy
+Running on: own server
+Waiting for framework to start
+Successfully launched Weppy
+
+Test: serialization test
+median: 66.0 stdev: 1.08 % 1.64
+
+
+Test: model serialization test
+median: 66.42 stdev: 1.01 % 1.52
+
+Framework: Weppy
+Running on: gunicorn server
+Waiting for framework to start
+Successfully launched Weppy
+
+Test: serialization test
+median: 64.02 stdev: 1.03 % 1.61
+
+
+Test: model serialization test
+median: 62.57 stdev: 0.85 % 1.36
+
+Framework: Django
+Running on: own server
+Waiting for framework to start
+Successfully launched Django
+
+Test: serialization test
+median: 33.69 stdev: 0.67 % 1.99
+
+
+Test: model serialization test
+median: 33.69 stdev: 1.34 % 3.98
+
+Framework: Django
+Running on: gunicorn server
+Waiting for framework to start
+Successfully launched Django
+
+Test: serialization test
+median: 50.48 stdev: 1.6 % 3.17
+
+
+Test: model serialization test
+median: 50.22 stdev: 1.05 % 2.09
+
+Framework: Falcon
+Running on: gunicorn server
+Waiting for framework to start
+Successfully launched Falcon
+
+Test: serialization test
+median: 99.41 stdev: 0.33 % 0.33
+
+
+Test: model serialization test
+median: 99.41 stdev: 2.49 % 2.5

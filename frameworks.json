@@ -8,12 +8,16 @@
     "ready_output": "Restarting (stat mode)",
     "tests": [
       {
-        "name": "serialization test",
+        "name": "Serialization test",
         "url": ""
       },
       {
-        "name": "model serialization test",
+        "name": "Model serialization test",
         "url": "/model"
+      },
+      {
+        "name": "load test",
+        "url": "/load"
       }
     ]
   },
@@ -26,11 +30,11 @@
     "ready_output": "Booting worker with pid:",
     "tests": [
       {
-        "name": "serialization test",
+        "name": "Serialization test",
         "url": ""
       },
       {
-        "name": "model serialization test",
+        "name": "model Serialization test",
         "url": "/model"
       }
     ]
@@ -38,36 +42,45 @@
   {
     "name": "Django",
     "server": "own",
-    "path": "frameworks/django_test/",
+    "path": "frameworks/python-webframeworks-tests/",
     "command": "python manage.py runserver 0.0.0.0:8082",
     "port": "8082",
     "ready_output": "Quit the server with CONTROL-C",
     "tests": [
       {
-        "name": "serialization test",
+        "name": "Serialization test",
         "url": ""
       },
       {
-        "name": "model serialization test",
+        "name": "Model serialization test",
         "url": "/model"
+      },
+      {
+        "name": "load test",
+        "url": "/load"
       }
+
     ]
   },
   {
     "name": "Django",
     "server": "gunicorn",
-    "path": "frameworks/django_test/",
+    "path": "frameworks/python-webframeworks-tests/",
     "command": "gunicorn django_test.wsgi -b :8083",
     "port": "8083",
     "ready_output": "Booting worker with pid:",
     "tests": [
       {
-        "name": "serialization test",
+        "name": "Serialization test",
         "url": ""
       },
       {
-        "name": "model serialization test",
+        "name": "Model serialization test",
         "url": "/model"
+      },
+      {
+        "name": "load test",
+        "url": "/load"
       }
     ]
   },
@@ -80,12 +93,16 @@
     "ready_output": "Booting worker with pid:",
     "tests": [
       {
-        "name": "serialization test",
+        "name": "Serialization test",
         "url": ""
       },
       {
-        "name": "model serialization test",
+        "name": "Model serialization test",
         "url": "/model"
+      },
+      {
+        "name": "load test",
+        "url": "/load"
       }
     ]
   },
@@ -98,7 +115,7 @@
     "ready_output": "Accepting connections on",
     "tests": [
       {
-        "name": "serialization test",
+        "name": "Serialization test",
         "url": ""
       }
     ]

@@ -2,8 +2,8 @@
 
 # Let's get this party started!
 import json
-
 import falcon
+from load import generate_load
 
 # setup connection to mongo
 from pymongo import MongoClient
@@ -31,13 +31,21 @@ class ModelTestResource(object):
         resp.body = json.dumps({'foo': foo['foo'], 'bar': foo['bar']})
 
 
+class LoadTestResource(object):
+    def on_get(self, req, resp):
+        """Handles GET requests"""
+        resp.body = generate_load()
+
+
 # falcon.API instances are callable WSGI apps
 app = falcon.API()
 
 # Resources are represented by long-lived class instances
 json_test = TestResource()
 model_test = ModelTestResource()
+load_test = LoadTestResource()
 
 # things will handle all requests to the '/things' URL path
 app.add_route('/', json_test)
 app.add_route('/model', model_test)
+app.add_route('/load', load_test)
