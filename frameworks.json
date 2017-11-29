@@ -36,6 +36,10 @@
       {
         "name": "model Serialization test",
         "url": "/model"
+      },
+      {
+        "name": "load test",
+        "url": "/load"
       }
     ]
   },
@@ -105,20 +109,5 @@
         "url": "/load"
       }
     ]
-  },
-    {
-    "name": "Japronto",
-    "server": "own",
-    "path": "frameworks/japronto_test/",
-    "command": "python app.py",
-    "port": "8085",
-    "ready_output": "Accepting connections on",
-    "tests": [
-      {
-        "name": "Serialization test",
-        "url": ""
-      }
-    ]
   }
-
 ]

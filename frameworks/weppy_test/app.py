@@ -43,8 +43,7 @@ def model_mongo():
 
 
 @app.route("/load")
-@service.json
-def simple_json():
+def load():
     return generate_load()
 
 
